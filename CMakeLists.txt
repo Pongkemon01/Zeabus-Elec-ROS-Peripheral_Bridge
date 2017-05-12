@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(zeabus_elec_ros_peripheral_bridge)
 
 ## Add support for C++11, supported in ROS Kinetic and newer
-# add_definitions(-std=c++11)
+add_definitions(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -10,6 +10,7 @@ project(zeabus_elec_ros_peripheral_bridge)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -53,11 +54,13 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  barometer.srv
+  solenoid.srv
+  senddata.srv
+  receivedata.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -67,10 +70,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -102,9 +105,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES zeabus_elec_ros_peripheral_bridge
-#  CATKIN_DEPENDS roscpp std_msgs
+ INCLUDE_DIRS ../zeabus_elec_library
+ LIBRARIES zeabus_elec_ros_peripheral_bridge
+ CATKIN_DEPENDS roscpp std_msgs message_runtime
 #  DEPENDS system_lib
 )
 
@@ -117,12 +120,15 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ../zeabus_elec_library
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/zeabus_elec_ros_peripheral_bridge.cpp
-# )
+add_library(${PROJECT_NAME}
+  src/zeabus_elec_ros_peripheral_bridge.cpp
+  ../zeabus_elec_library/libftd2xx.a
+  ../zeabus_elec_library/ftdi_impl.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
